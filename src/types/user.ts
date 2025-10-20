@@ -8,8 +8,8 @@
 /**
  * User interface
  *
- * Minimal user model with just id, name, and timestamps.
- * Provides foreign key support for Position model.
+ * User model for authentication and position tracking.
+ * Supports multiple authentication methods (wallet, email in future).
  */
 export interface User {
   /**
@@ -19,8 +19,22 @@ export interface User {
 
   /**
    * User's display name
+   * Optional - user may not have set a name yet
    */
-  name: string;
+  name: string | null;
+
+  /**
+   * User's email address
+   * Optional - used for email-based authentication (future)
+   * Must be unique if provided
+   */
+  email: string | null;
+
+  /**
+   * User's profile picture URL
+   * Optional - avatar or profile image
+   */
+  image: string | null;
 
   /**
    * Creation timestamp
