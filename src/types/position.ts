@@ -44,6 +44,25 @@ export interface Position<P extends keyof PositionConfigMap> {
    */
   updatedAt: Date;
 
+  /**
+   * Position hash for fast database lookups
+   *
+   * Human-readable composite key that uniquely identifies the position.
+   * Format is protocol-specific:
+   * - UniswapV3: "uniswapv3/{chainId}/{nftId}"
+   * - Orca (future): "orca/{programId}/{positionPubkey}"
+   *
+   * Used for efficient indexed lookups instead of slow JSONB queries.
+   *
+   * @example
+   * // Ethereum UniswapV3 position NFT #123456
+   * positionHash = "uniswapv3/1/123456"
+   *
+   * // Arbitrum UniswapV3 position NFT #4865121
+   * positionHash = "uniswapv3/42161/4865121"
+   */
+  positionHash: string;
+
   // ============================================================================
   // PROTOCOL IDENTIFICATION
   // ============================================================================
