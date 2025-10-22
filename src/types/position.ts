@@ -385,3 +385,94 @@ export function getQuoteToken<P extends keyof PositionConfigMap>(
 ): Position<P>['pool']['token0'] {
   return position.isToken0Quote ? position.pool.token0 : position.pool.token1;
 }
+
+// ============================================================================
+// TYPE GUARDS AND ASSERTIONS
+// ============================================================================
+
+/**
+ * Type guard for Uniswap V3 positions
+ *
+ * Safely narrows AnyPosition to UniswapV3Position, allowing access to
+ * protocol-specific config and state fields.
+ *
+ * @param position - Position to check
+ * @returns True if position is a Uniswap V3 position
+ *
+ * @example
+ * ```typescript
+ * const position: AnyPosition = await getPosition();
+ *
+ * if (isUniswapV3Position(position)) {
+ *   // TypeScript knows position is UniswapV3Position here
+ *   console.log(position.config.nftId);
+ *   console.log(position.state.liquidity);
+ * }
+ * ```
+ */
+export function isUniswapV3Position(
+  position: AnyPosition
+): position is UniswapV3Position {
+  return position.protocol === 'uniswapv3';
+}
+
+/**
+ * Assertion function for Uniswap V3 positions
+ *
+ * Throws an error if position is not a Uniswap V3 position.
+ * After calling this function, TypeScript knows the position is UniswapV3Position.
+ *
+ * @param position - Position to check
+ * @throws Error if position is not a Uniswap V3 position
+ *
+ * @example
+ * ```typescript
+ * const position: AnyPosition = await getPosition();
+ *
+ * assertUniswapV3Position(position);
+ * // TypeScript knows position is UniswapV3Position after this line
+ * console.log(position.config.nftId);
+ * ```
+ */
+export function assertUniswapV3Position(
+  position: AnyPosition
+): asserts position is UniswapV3Position {
+  if (!isUniswapV3Position(position)) {
+    throw new Error(
+      `Expected Uniswap V3 position, got protocol: ${(position as AnyPosition).protocol}`
+    );
+  }
+}
+
+/**
+ * Generic position protocol narrowing function
+ *
+ * Narrows AnyPosition to a specific protocol type at runtime.
+ * Useful when you have a protocol identifier from a variable.
+ *
+ * @param position - Position to narrow
+ * @param protocol - Expected protocol identifier
+ * @returns Position narrowed to the specified protocol type
+ * @throws Error if position protocol doesn't match expected protocol
+ *
+ * @example
+ * ```typescript
+ * const position: AnyPosition = await getPosition();
+ * const protocol: 'uniswapv3' = 'uniswapv3';
+ *
+ * const uniV3Position = narrowPositionProtocol(position, protocol);
+ * // TypeScript knows uniV3Position is UniswapV3Position
+ * console.log(uniV3Position.config.nftId);
+ * ```
+ */
+export function narrowPositionProtocol<P extends keyof PositionConfigMap>(
+  position: AnyPosition,
+  protocol: P
+): Position<P> {
+  if (position.protocol !== protocol) {
+    throw new Error(
+      `Position protocol mismatch: expected ${protocol}, got ${position.protocol}`
+    );
+  }
+  return position as Position<P>;
+}

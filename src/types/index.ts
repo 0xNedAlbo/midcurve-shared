@@ -34,6 +34,15 @@ export type {
   AnyPosition,
 } from './position.js';
 
+// Position utility functions
+export {
+  getBaseToken,
+  getQuoteToken,
+  isUniswapV3Position,
+  assertUniswapV3Position,
+  narrowPositionProtocol,
+} from './position.js';
+
 // Pool price types
 export type {
   PoolPrice,
